@@ -5,41 +5,25 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\AffiliateDashboardController;
+use App\Http\Controllers\VendorDashboardController;
+use App\Http\Controllers\Vendor\ProductController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Guest Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now let's build something great!
-|
 */
-
-/*
-|--------------------------------------------------------------------------
-| Authentication Routes
-|--------------------------------------------------------------------------
-|
-| Here are the authentication routes for your application. These routes
-| are loaded by the RouteServiceProvider within a group which contains
-| the "web" middleware group.
-|
-*/
-
-// Guest routes (only accessible when not authenticated)
 Route::middleware('guest')->group(function () {
-    
     // Login Routes
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
     Route::post('/ajax/login', [LoginController::class, 'ajaxLogin'])->name('login.ajax');
-    
+
     // Registration Routes
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
-    
+
     // Password Reset Routes
     Route::get('/password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
@@ -47,34 +31,132 @@ Route::middleware('guest')->group(function () {
     Route::post('/password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 });
 
-// Authenticated routes (only accessible when authenticated)
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
-    
+
     // Logout Route
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-    Route::get('/logout', [LoginController::class, 'logout'])->name('logout.get'); // For GET requests
-    
-    // Check authentication status (for AJAX)
+
+    // AJAX Auth Check
     Route::get('/auth/check', [LoginController::class, 'checkAuth'])->name('auth.check');
-    
-    // Dashboard (example protected route)
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-    
-    // Home redirect
+
+    /*
+    |--------------------------------------------------------------------------
+    | Affiliate Dashboard Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('affiliate')->name('affiliate.')->middleware('role:affiliate')->group(function () {
+        Route::get('/dashboard', [AffiliateDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/affdash', [AffiliateDashboardController::class, 'index'])->name('affdash');
+        Route::get('/earnings', [AffiliateDashboardController::class, 'getEarningsData'])->name('earnings');
+        Route::get('/profile', [AffiliateDashboardController::class, 'profile'])->name('profile');
+        Route::get('/reports', [AffiliateDashboardController::class, 'reports'])->name('reports');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Vendor Dashboard and Product Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('vendor')->name('vendor.')->middleware('role:vendor')->group(function () {
+
+        // Dashboard Routes
+        Route::get('/dashboard', [VendorDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/vendash', [VendorDashboardController::class, 'index'])->name('vendash');
+        Route::get('/orders', [VendorDashboardController::class, 'orders'])->name('orders');
+        Route::get('/analytics', [VendorDashboardController::class, 'analytics'])->name('analytics');
+        Route::get('/profile', [VendorDashboardController::class, 'profile'])->name('profile');
+        Route::get('/settings', [VendorDashboardController::class, 'settings'])->name('settings');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Product Management Routes
+        |--------------------------------------------------------------------------
+        */
+      
+Route::prefix('products')->name('products.')->group(function () {
+    // Product Display Routes
+    Route::get('/', [ProductController::class, 'index'])->name('index');
+    Route::get('/create', [ProductController::class, 'create'])->name('create');
+    Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('edit')->where('product', '[0-9]+');
+    Route::get('/{product}/analytics', [ProductController::class, 'analytics'])->name('analytics')->where('product', '[0-9]+');
+    Route::get('/{product}', [ProductController::class, 'show'])->name('show')->where('product', '[0-9]+');
+
+    // Product API/AJAX Routes
+    Route::get('/get-products', [ProductController::class, 'getProducts'])->name('get');
+    Route::post('/', [ProductController::class, 'store'])->name('store');
+    Route::put('/{product}', [ProductController::class, 'update'])->name('update')->where('product', '[0-9]+');
+    Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy')->where('product', '[0-9]+');
+
+    // Bulk Actions
+    Route::post('/bulk-update-status', [ProductController::class, 'bulkUpdateStatus'])->name('bulk-update-status');
+    Route::patch('/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('toggle')->where('product', '[0-9]+');
+
+    // Additional Product Actions
+    Route::post('/{product}/duplicate', [ProductController::class, 'duplicate'])->name('duplicate')->where('product', '[0-9]+');
+    Route::get('/export', [ProductController::class, 'export'])->name('export');
+    Route::post('/import', [ProductController::class, 'import'])->name('import');
+});
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Role-Based Redirect Routes
+    |--------------------------------------------------------------------------
+    */
     Route::get('/home', function () {
-        return redirect()->route('dashboard');
+        $user = auth()->user();
+        switch ($user->role) {
+            case 'affiliate':
+                return redirect()->route('affiliate.dashboard');
+            case 'vendor':
+                return redirect()->route('vendor.dashboard');
+            default:
+                return view('home');
+        }
     })->name('home');
+
+    // Dashboard redirect route
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+        switch ($user->role) {
+            case 'affiliate':
+                return redirect()->route('affiliate.dashboard');
+            case 'vendor':
+                return redirect()->route('vendor.dashboard');
+            default:
+                return view('dashboard');
+        }
+    })->name('dashboard');
 });
 
-// Public routes
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Fallback Route
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/', function () {
     if (auth()->check()) {
-        return redirect()->route('dashboard');
+        $user = auth()->user();
+        switch ($user->role) {
+            case 'affiliate':
+                return redirect()->route('affiliate.affdash');
+            case 'vendor':
+                return redirect()->route('vendor.vendash');
+            default:
+                return redirect()->route('home');
+        }
     }
     return view('welcome');
 })->name('root');
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

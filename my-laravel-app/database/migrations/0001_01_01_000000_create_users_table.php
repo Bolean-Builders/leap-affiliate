@@ -23,6 +23,9 @@ return new class extends Migration
             $table->enum('role', ['affiliate', 'vendor'])->default('affiliate');
             $table->enum('user_type', ['affiliate', 'vendor'])->default('affiliate');
             
+            // affiliate fields
+            $table->string('referral_code')->unique()->nullable();
+            
             // Additional user profile fields
             $table->timestamp('last_login_at')->nullable();
             $table->string('last_login_ip')->nullable();

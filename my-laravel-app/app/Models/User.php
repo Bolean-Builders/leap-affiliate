@@ -18,15 +18,17 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-    'name',
-    'username',
-    'email', 
-    'password',
-    'role',
-    'user_type',
-    'last_login_at',
-    'last_login_ip',
-];
+        'name',
+        'username',
+        'email', 
+        'password',
+        'role',
+        'user_type',
+        'referral_code',
+        'last_login_at',
+        'last_login_ip',
+    ];
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -124,5 +126,45 @@ class User extends Authenticatable
     public function scopeRecentlyActive($query, int $days = 30)
     {
         return $query->where('last_login_at', '>=', now()->subDays($days));
+    }
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            // Only generate referral code for affiliates
+            if ($user->role === 'affiliate') {
+                $user->referral_code = self::generateReferralCode();
+            }
+        });
+    }
+
+    /**
+     * Generate referral code for affiliates only
+     */
+    private static function generateReferralCode()
+    {
+        $prefix = 'REF-AffLA';
+        
+        // Get the last affiliate with a referral code
+        $lastAffiliate = self::where('role', 'affiliate')
+            ->where('referral_code', 'like', $prefix . '%')
+            ->orderBy('referral_code', 'desc')
+            ->first();
+
+        if ($lastAffiliate) {
+            // Extract the number from the last referral code
+            $lastNumber = (int) substr($lastAffiliate->referral_code, strlen($prefix));
+            $nextNumber = $lastNumber + 1;
+        } else {
+            $nextNumber = 1;
+        }
+
+        // Format with leading zeros (001, 002, etc.)
+        return $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
     }
 }
