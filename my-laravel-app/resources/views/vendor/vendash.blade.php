@@ -208,7 +208,7 @@
         }
     </style>
 </head>
- @include('partials.vendor.navbar')
+ @include('layouts.app')
 <body x-data="dashboardData()">
     <!-- Animated Background Shapes -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none">

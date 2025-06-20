@@ -267,7 +267,7 @@
                                 <div class="text-white/60 text-xs">View & edit profile</div>
                             </div>
                         </a>
-                        <a href="#" class="dropdown-item flex items-center px-4 py-3 text-white/90 text-sm">
+                        <a href="{{ route('vendor.earnings') }}" class="dropdown-item flex items-center px-4 py-3 text-white/90 text-sm">
                             <i class="fas fa-wallet mr-3 text-green-400"></i>
                             <div>
                                 <div class="font-medium">Earnings</div>
@@ -281,7 +281,7 @@
                                 <div class="text-white/60 text-xs">Manage your links</div>
                             </div>
                         </a>
-                        <a href="#" class="dropdown-item flex items-center px-4 py-3 text-white/90 text-sm">
+                        <a href="{{ route('vendor.payment-methods.blade') }}" class="dropdown-item flex items-center px-4 py-3 text-white/90 text-sm">
                             <i class="fas fa-cog mr-3 text-gray-400"></i>
                             <div>
                                 <div class="font-medium">Settings</div>
@@ -420,7 +420,7 @@
                         <span class="font-medium">Home</span>
                     </a>
                     
-                    <a href="#" @click="closeMobileMenu()" class="mobile-menu-item flex items-center text-white/90 hover:text-white p-4 transition-all">
+                    <a href="{{ route('vendor.products.index') }}" @click="closeMobileMenu()" class="mobile-menu-item flex items-center text-white/90 hover:text-white p-4 transition-all">
                         <i class="fas fa-box mr-4 text-green-400 w-5"></i>
                         <span class="font-medium">My Products</span>
                     </a>
@@ -440,9 +440,9 @@
                         </button>
                         <div x-show="mobileDropdowns.profile" x-collapse class="ml-9 mt-1 space-y-1">
                             <a href="#" @click="closeMobileMenu()" class="mobile-dropdown-item block text-white/80 hover:text-white p-3 text-sm font-medium transition-all">My Profile</a>
-                            <a href="#" @click="closeMobileMenu()" class="mobile-dropdown-item block text-white/80 hover:text-white p-3 text-sm font-medium transition-all">Earnings</a>
+                            <a href="{{ route('vendor.earnings') }}" @click="closeMobileMenu()" class="mobile-dropdown-item block text-white/80 hover:text-white p-3 text-sm font-medium transition-all">Earnings</a>
                             <a href="#" @click="closeMobileMenu()" class="mobile-dropdown-item block text-white/80 hover:text-white p-3 text-sm font-medium transition-all">Affiliate Links</a>
-                            <a href="#" @click="closeMobileMenu()" class="mobile-dropdown-item block text-white/80 hover:text-white p-3 text-sm font-medium transition-all">Settings</a>
+                            <a href="{{ route('vendor.payment-methods.blade') }}" @click="closeMobileMenu()" class="mobile-dropdown-item block text-white/80 hover:text-white p-3 text-sm font-medium transition-all">Settings</a>
                         </div>
                     </div>
                     

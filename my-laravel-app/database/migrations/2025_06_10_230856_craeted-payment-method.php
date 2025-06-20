@@ -13,7 +13,7 @@ return new class extends Migration
             // Core Info
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->enum('method_type', ['paypal', 'bank_transfer', 'stripe', 'wise', 'crypto', 'mobile_money']);
+            $table->enum('method_type', ['paypal', 'bank_transfer', 'mobile_money']);
             $table->string('method_name', 100); // "My PayPal", "Main Bank Account"
             
             // Primary Account Details (Direct Fields)
@@ -28,6 +28,10 @@ return new class extends Migration
             $table->string('account_identifier')->nullable(); // Main identifier for quick access
             $table->string('currency', 3)->default('USD'); // ISO 4217 currency code
             $table->string('country_code', 3); // ISO 3166-1 alpha-3 country code
+
+
+
+            
             
             // Status & Settings
             $table->boolean('is_active')->default(true);

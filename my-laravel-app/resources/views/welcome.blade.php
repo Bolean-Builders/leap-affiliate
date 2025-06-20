@@ -67,15 +67,14 @@
                 </div>
                 
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#features" class="text-gray-700 hover:text-purple-600 transition duration-300">Features</a>
-                    <a href="#pricing" class="text-gray-700 hover:text-purple-600 transition duration-300">Pricing</a>
-                    <a href="#testimonials" class="text-gray-700 hover:text-purple-600 transition duration-300">Success Stories</a>
-                    <a href="{{ route('register') }}" class="text-gray-700 hover:text-purple-600 transition duration-300">Contact</a>
-                    <button class="bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition duration-300">
-                        Get Started
-                    </button>
-                </div>
-                
+    <a href="#features" class="text-gray-700 hover:text-purple-600 transition duration-300">Features</a>
+    <a href="#pricing" class="text-gray-700 hover:text-purple-600 transition duration-300">Pricing</a>
+    <a href="#testimonials" class="text-gray-700 hover:text-purple-600 transition duration-300">Success Stories</a>
+    <a href="{{ route('register') }}" class="text-gray-700 hover:text-purple-600 transition duration-300">Contact</a>
+    <a href="{{ route('register') }}" class="bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition duration-300">
+        Get Started
+    </a>
+</div>
                 <div class="md:hidden flex items-center">
                     <button @click="open = !open" class="text-gray-700">
                         <i class="fas fa-bars text-xl"></i>
@@ -84,16 +83,15 @@
             </div>
         </div>
         
-        <!-- Mobile menu -->
-        <div x-show="open" class="md:hidden bg-white shadow-lg">
-            <div class="px-2 pt-2 pb-3 space-y-1">
-                <a href="#features" class="block px-3 py-2 text-gray-700">Features</a>
-                <a href="#pricing" class="block px-3 py-2 text-gray-700">Pricing</a>
-                <a href="#testimonials" class="block px-3 py-2 text-gray-700">Success Stories</a>
-                <a href="#contact" class="block px-3 py-2 text-gray-700">Contact</a>
-                <button class="w-full text-left bg-purple-600 text-white px-3 py-2 rounded">Get Started</button>
-            </div>
-        </div>
+       <div x-show="open" class="md:hidden bg-white shadow-lg">
+    <div class="px-2 pt-2 pb-3 space-y-1">
+        <a href="#features" class="block px-3 py-2 text-gray-700">Features</a>
+        <a href="#pricing" class="block px-3 py-2 text-gray-700">Pricing</a>
+        <a href="#testimonials" class="block px-3 py-2 text-gray-700">Success Stories</a>
+        <a href="#contact" class="block px-3 py-2 text-gray-700">Contact</a>
+        <a href="{{ route('register') }}" class="w-full block text-left bg-purple-600 text-white px-3 py-2 rounded">Get Started</a>
+    </div>
+</div>
     </nav>
 
     <!-- Hero Section -->

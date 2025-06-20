@@ -31,6 +31,8 @@ class VendorDashboardController extends Controller
         $earnings = $this->getEarningsData();
         $username = Auth::user()->username;
         $role = Auth::user()->role;
+
+          session()->flash('success', 'vendor dasboard loaded successfully!');
         
         // Pass all variables to the view - corrected to use 'vendors' (plural)
         return view('vendor.vendash', compact('earnings', 'username', 'role'));
@@ -60,5 +62,7 @@ class VendorDashboardController extends Controller
 {
     return view('vendor.products');
 }
+
+
 
 }

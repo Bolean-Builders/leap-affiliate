@@ -24,7 +24,7 @@
 
         {{-- ✅ Vendor Navbar --}}
         @include('partials.vendor.navbar')
-
+        @include('components.notification')
         {{-- Default Laravel Navbar (optional) --}}
         {{-- 
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">

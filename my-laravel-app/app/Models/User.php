@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -51,6 +52,64 @@ class User extends Authenticatable
             'last_login_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get all payment methods for this user.
+     */
+    public function paymentMethods(): HasMany
+    {
+        return $this->hasMany(PaymentMethod::class);
+    }
+
+    /**
+     * Get active payment methods for this user.
+     */
+    public function activePaymentMethods(): HasMany
+    {
+        return $this->hasMany(PaymentMethod::class)->where('is_active', true);
+    }
+
+    /**
+     * Get verified payment methods for this user.
+     */
+    public function verifiedPaymentMethods(): HasMany
+    {
+        return $this->hasMany(PaymentMethod::class)->where('is_verified', true);
+    }
+
+    /**
+     * Get default payment method for a specific type.
+     */
+    public function getDefaultPaymentMethod(string $type = null)
+    {
+        $query = $this->paymentMethods()->where('is_default', true);
+        
+        if ($type) {
+            $query->where('method_type', $type);
+        }
+        
+        return $query->first();
+    }
+
+    /**
+     * Check if user has any verified payment methods.
+     */
+    public function hasVerifiedPaymentMethods(): bool
+    {
+        return $this->paymentMethods()->where('is_verified', true)->exists();
+    }
+
+    /**
+     * Get payment methods count by type.
+     */
+    public function getPaymentMethodsCountByType(): array
+    {
+        return $this->paymentMethods()
+            ->selectRaw('method_type, COUNT(*) as count')
+            ->groupBy('method_type')
+            ->pluck('count', 'method_type')
+            ->toArray();
     }
 
     /**
